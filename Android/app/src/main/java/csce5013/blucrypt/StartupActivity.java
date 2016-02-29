@@ -3,6 +3,8 @@ package csce5013.blucrypt;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+//Shiming has been here
+
 public class StartupActivity extends AppCompatActivity {
 
     @Override
