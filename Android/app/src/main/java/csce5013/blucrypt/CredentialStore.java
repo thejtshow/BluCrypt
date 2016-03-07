@@ -30,7 +30,8 @@ public class CredentialStore
         credentials = new ArrayList<>();
         this.parent = parent;
 
-        try {
+        try
+        {
             md = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e)
         {
@@ -133,15 +134,13 @@ public class CredentialStore
         //update the message digest
         md.update(ByteBuffer.allocate(4).putInt(PIN).array());
 
-        byte[] test = md.digest();
-
         //return the hash
-        return test;
+        return md.digest();
     }
 
-    public void ClearMemory()
+    public int ClearMemory()
     {
         credentials = new ArrayList<>();
-        StoreCredentials();
+        return StoreCredentials();
     }
 }

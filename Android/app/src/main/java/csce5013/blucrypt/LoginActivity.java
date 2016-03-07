@@ -17,8 +17,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private CredentialStore credentials;
     private TextView infoText, infoText2;
-    private EditText PINField;
-    private Button clearMemory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -27,12 +25,12 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         //instantiate credentials library, pass boolean if keystore exists
-        credentials = new CredentialStore((new File(this.getFilesDir() + "keystore").exists() && !(new File("keystore").isDirectory())), this);
+        credentials = new CredentialStore((new File(this.getFilesDir() + "keystore").exists() && !(new File(this.getFilesDir() + "keystore").isDirectory())), this);
 
-        PINField = (EditText) findViewById(R.id.PINField);
+        EditText PINField = (EditText) findViewById(R.id.PINField);
         infoText = (TextView) findViewById(R.id.infoText);
         infoText2 = (TextView) findViewById(R.id.infoText2);
-        clearMemory = (Button) findViewById(R.id.clearMemory);
+        Button clearMemory = (Button) findViewById(R.id.clearMemory);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         PINField.addTextChangedListener(new TextWatcher() {
@@ -47,45 +45,43 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s)
-            {
-                if (s.length() == 6)
-                {
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 6) {
                     final int PIN = Integer.valueOf(s.toString());
 
                     //clear the text field here regardless -- aesthetics
                     s.clear();
 
-                    if(credentials.HasCredentials())
-                    {
-                        if(credentials.CheckCredential(PIN))
-                        {
+                    if (credentials.HasCredentials()) {
+                        if (credentials.CheckCredential(PIN)) {
                             //log in
                             Login();
 
                             infoText2.setText("");
-                        }
-                        else
-                        {
+                        } else {
                             //do not log in. Must log in to add a new credential
                             infoText.setText("Failed!!!");
                         }
-                    }
-                    else
-                    {
+                    } else {
                         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                switch (which){
+                                switch (which) {
                                     case DialogInterface.BUTTON_POSITIVE:
                                         //add PIN to the credential store
-                                        credentials.AddCredential(PIN);
+                                        if (credentials.AddCredential(PIN) == 0)
+                                        {
+                                            //display a debug message
+                                            infoText2.setText("Added PIN to credential store");
 
-                                        //display a debug message
-                                        infoText2.setText("Added PIN to credential store");
-
-                                        //now log the user in
-                                        Login();
+                                            //now log the user in
+                                            Login();
+                                        }
+                                        else
+                                        {
+                                            infoText2.setText("PIN addition failed");
+                                            infoText.setText("Failed!!!");
+                                        }
                                         break;
 
                                     case DialogInterface.BUTTON_NEGATIVE:
@@ -103,8 +99,11 @@ public class LoginActivity extends AppCompatActivity {
 
         clearMemory.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                credentials.ClearMemory();
+            public void onClick(View v)
+            {
+                if (credentials.ClearMemory() == 0)
+                    infoText2.setText("Memory Cleared!");
+                else infoText2.setText("Memory Clearance Failed!!!");
             }
         });
     }
