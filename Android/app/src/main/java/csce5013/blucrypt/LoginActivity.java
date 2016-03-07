@@ -1,9 +1,12 @@
 package csce5013.blucrypt;
 
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -15,6 +18,7 @@ public class LoginActivity extends AppCompatActivity {
     private CredentialStore credentials;
     private TextView infoText, infoText2;
     private EditText PINField;
+    private Button clearMemory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -23,11 +27,12 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         //instantiate credentials library, pass boolean if keystore exists
-        credentials = new CredentialStore((new File("keystore").exists() && !(new File("keystore").isDirectory())));
+        credentials = new CredentialStore((new File(this.getFilesDir() + "keystore").exists() && !(new File("keystore").isDirectory())), this);
 
         PINField = (EditText) findViewById(R.id.PINField);
         infoText = (TextView) findViewById(R.id.infoText);
         infoText2 = (TextView) findViewById(R.id.infoText2);
+        clearMemory = (Button) findViewById(R.id.clearMemory);
 
         PINField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -56,6 +61,8 @@ public class LoginActivity extends AppCompatActivity {
                         {
                             //log in
                             Login();
+
+                            infoText2.setText("");
                         }
                         else
                         {
@@ -79,6 +86,13 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 }
+            }
+        });
+
+        clearMemory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                credentials.ClearMemory();
             }
         });
     }

@@ -1,5 +1,7 @@
 package csce5013.blucrypt;
 
+import android.content.Context;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,10 +23,13 @@ public class CredentialStore
 {
     private List<Serializable> credentials;
     private MessageDigest md;
+    private Context parent;
 
-    public CredentialStore(boolean load)
+    public CredentialStore(boolean load, Context parent)
     {
         credentials = new ArrayList<>();
+        this.parent = parent;
+
         try {
             md = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e)
@@ -36,7 +42,7 @@ public class CredentialStore
         {
             try
             {
-                File file = new File("keystore");
+                File file = new File(this.parent.getFilesDir() + "keystore");
                 FileInputStream f = new FileInputStream(file);
                 ObjectInputStream s = new ObjectInputStream(f);
                 credentials = (List<Serializable>)s.readObject();
@@ -58,15 +64,13 @@ public class CredentialStore
     {
         int success;
 
-        byte[] hashedPIN = Hash(PIN);
-
-        if(credentials.contains(hashedPIN))
+        if(CheckCredential(PIN))
         {
             success = 1;
         }
         else
         {
-            credentials.add(hashedPIN);
+            credentials.add(Hash(PIN));
             success = StoreCredentials();
         }
 
@@ -76,7 +80,18 @@ public class CredentialStore
     //Authenticate and return what he has access to
     public boolean CheckCredential (int PIN)
     {
-        return credentials.contains(Hash(PIN));
+        byte[] test = Hash(PIN);
+        boolean passed = false;
+
+        for (Serializable cred : credentials)
+        {
+            if (Arrays.equals((byte[]) cred, test))
+            {
+                passed = true;
+            }
+        }
+
+        return passed;
     }
 
     //remove a credential from the store
@@ -97,7 +112,7 @@ public class CredentialStore
     private int StoreCredentials(){
         int success = 0;
 
-        File file = new File("keystore");
+        File file = new File(parent.getFilesDir() + "keystore");
         FileOutputStream f;
 
         try {
@@ -107,7 +122,7 @@ public class CredentialStore
             s.flush();
             s.close();
         } catch (IOException e) {
-            success = 1;
+            System.out.println(e.toString());
         }
 
         return success;
@@ -118,7 +133,15 @@ public class CredentialStore
         //update the message digest
         md.update(ByteBuffer.allocate(4).putInt(PIN).array());
 
+        byte[] test = md.digest();
+
         //return the hash
-        return md.digest();
+        return test;
+    }
+
+    public void ClearMemory()
+    {
+        credentials = new ArrayList<>();
+        StoreCredentials();
     }
 }
