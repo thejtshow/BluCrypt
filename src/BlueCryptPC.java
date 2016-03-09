@@ -70,6 +70,7 @@ public class BlueCryptPC {
 		streamConnectionNotifier=(StreamConnectionNotifier)Connector.open(connectionString);
 		System.out.println("Waiting for client...");
 		streamConnection=streamConnectionNotifier.acceptAndOpen();
+		System.out.println("Successfully connected...");
 	
 		remoteDevice=RemoteDevice.getRemoteDevice(streamConnection);
 		System.out.println("Remote device address: "+remoteDevice.getBluetoothAddress());
@@ -78,7 +79,7 @@ public class BlueCryptPC {
 	    InputStream inputStream=streamConnection.openInputStream();
 		BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
 		readMessage=bufferedReader.readLine();
-		
+		System.out.println(readMessage);
 		
 		sendMessage="I got it!";
 		OutputStream outputStream=streamConnection.openOutputStream();
