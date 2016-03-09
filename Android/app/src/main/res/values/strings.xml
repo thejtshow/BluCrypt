@@ -2,4 +2,5 @@
     <string name="app_name">BluCrypt</string>
     <string name="description">Message from the server:</string>
     <string name="message"></string>
+    <string name="messagee_hint">[display message from paird device...]</string>
 </resources>
