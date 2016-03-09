@@ -104,6 +104,7 @@ public class BlueCryptPC {
 		btnStart.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				System.out.println("show...");
 				textArea.append("Start listening..."+"\n");
 				 try {
 					 startServer();
