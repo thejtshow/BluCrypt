@@ -61,7 +61,7 @@ public class CredentialStore
     }
 
     //0 = success, 1 = PIN already exists
-    public int AddCredential(int PIN)
+    public byte[] AddCredential(int PIN)
     {
         int success;
 
@@ -75,7 +75,9 @@ public class CredentialStore
             success = StoreCredentials();
         }
 
-        return success;
+       if (success == 0)
+           return Hash(PIN);
+        else return null;
     }
 
     //Authenticate and return what he has access to
@@ -123,7 +125,7 @@ public class CredentialStore
             s.flush();
             s.close();
         } catch (IOException e) {
-            System.out.println(e.toString());
+            success = 1;
         }
 
         return success;

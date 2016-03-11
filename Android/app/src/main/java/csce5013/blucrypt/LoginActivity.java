@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                                 switch (which) {
                                     case DialogInterface.BUTTON_POSITIVE:
                                         //add PIN to the credential store
-                                        if (credentials.AddCredential(PIN) == 0)
+                                        if (credentials.AddCredential(PIN) != null)
                                         {
                                             //display a debug message
                                             infoText2.setText("Added PIN to credential store");
