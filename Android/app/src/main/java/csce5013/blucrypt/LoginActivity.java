@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (credentials.HasCredentials()) {
                         if (credentials.CheckCredential(PIN)) {
                             //log in
-                            Login();
+                            Login(credentials.getHash(PIN));
 
                             infoText2.setText("");
                         } else {
@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                                             infoText2.setText("Added PIN to credential store");
 
                                             //now log the user in
-                                            Login();
+                                            Login(credentials.getHash(PIN));
                                         }
                                         else
                                         {
@@ -108,8 +108,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void Login()
+    private void Login(byte[] hash)
     {
         infoText.setText("Success!");
+
+        //Here you should start your logged in activity. pass in the hash
     }
 }

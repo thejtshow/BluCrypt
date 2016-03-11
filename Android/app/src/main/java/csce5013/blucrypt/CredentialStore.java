@@ -145,4 +145,9 @@ public class CredentialStore
         credentials = new ArrayList<>();
         return StoreCredentials();
     }
+
+    public byte[] getHash(int PIN)
+    {
+        return Hash(PIN);
+    }
 }
