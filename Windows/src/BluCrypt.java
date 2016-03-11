@@ -1,5 +1,4 @@
 import java.awt.EventQueue;
-import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -11,9 +10,6 @@ import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
 public class BluCrypt {
 
