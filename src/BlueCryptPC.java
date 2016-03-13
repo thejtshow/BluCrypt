@@ -3,11 +3,14 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
 import java.awt.GridLayout;
 import java.awt.TextArea;
 
 import javax.bluetooth.RemoteDevice;
 import javax.bluetooth.UUID;
+import javax.crypto.Cipher;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
@@ -22,12 +25,16 @@ import javax.swing.JLabel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class BlueCryptPC {
 	
@@ -40,6 +47,7 @@ public class BlueCryptPC {
 	private String sendMessage;
 
 	private JFrame frmBlurcrypt;
+	private JButton btnEncrypt;
 
 	/**
 	 * Launch the application.
@@ -101,10 +109,10 @@ public class BlueCryptPC {
 		
 		JButton btnStart = new JButton("Start");
 		JTextArea textArea = new JTextArea();
+		frmBlurcrypt.setDefaultCloseOperation(3);
 		btnStart.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				System.out.println("show...");
 				textArea.append("Start listening..."+"\n");
 				 try {
 					 startServer();
@@ -118,6 +126,89 @@ public class BlueCryptPC {
 		
 		
 		JLabel lblLog = new JLabel("Log:");
+		
+		JButton btnChoose = new JButton("Encrypt");
+		btnChoose.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc=new JFileChooser();  
+		        jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES );  
+		        jfc.showDialog(new JLabel(), "Encrypt");  
+		        File file=jfc.getSelectedFile();  
+		        if(file.isDirectory()){  
+		            System.out.println("Folder:"+file.getAbsolutePath());  
+		        }else if(file.isFile()){  
+		            System.out.println("File:"+file.getAbsolutePath());  
+		        }  
+		        System.out.println(jfc.getSelectedFile().getName());
+		        CryptUtil cryptUtil=new CryptUtil(file.getAbsolutePath().replaceAll("\\\\", "/"), "C:\\Users\\Owner\\Desktop\\keyfolder\\", "zx9956123");
+		        try {
+		        	cryptUtil.generateKey();
+					//cryptUtil.loadKey();
+					cryptUtil.encryptFile();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+		        
+			}
+		});
+		
+		JButton btnEncrypt;
+		btnEncrypt = new JButton("Encrypt");
+		btnEncrypt.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc=new JFileChooser();  
+		        jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES );  
+		        jfc.showDialog(new JLabel(), "Encrypt");  
+		        File file=jfc.getSelectedFile();  
+		        if(file.isDirectory()){  
+		            System.out.println("Folder:"+file.getAbsolutePath());  
+		        }else if(file.isFile()){  
+		            System.out.println("File:"+file.getAbsolutePath());  
+		        }  
+		        System.out.println(jfc.getSelectedFile().getName());
+		        CryptUtil cryptUtil=new CryptUtil(file.getAbsolutePath().replaceAll("\\\\", "/"), "C:\\Users\\Owner\\Desktop\\keyfolder\\", "zx9956123");
+		        try {
+		        	cryptUtil.generateKey();
+					//cryptUtil.loadKey();
+					cryptUtil.encryptFile();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+		        
+			}
+		});
+		
+		JButton btnDecrypt = new JButton("Decrypt");
+		btnDecrypt.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFileChooser jfc=new JFileChooser();  
+		        jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES );  
+		        jfc.showDialog(new JLabel(), "Decrypt");  
+		        File file=jfc.getSelectedFile();  
+		        if(file.isDirectory()){  
+		            System.out.println("Folder:"+file.getAbsolutePath());  
+		        }else if(file.isFile()){  
+		            System.out.println("File:"+file.getAbsolutePath());  
+		        }  
+		        System.out.println(jfc.getSelectedFile().getName());
+		        CryptUtil cryptUtil=new CryptUtil(file.getAbsolutePath().replaceAll("\\\\", "/"), "C:\\Users\\Owner\\Desktop\\keyfolder\\", "zx9956123");
+		        try {       	
+					cryptUtil.loadKey();
+					cryptUtil.decryptionFile();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+		        
+			}
+		});
+		
+
 		GroupLayout groupLayout = new GroupLayout(frmBlurcrypt.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -125,7 +216,12 @@ public class BlueCryptPC {
 					.addContainerGap()
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 393, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnStart)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(btnStart)
+							.addGap(18)
+							.addComponent(btnEncrypt)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(btnDecrypt, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE))
 						.addComponent(lblLog))
 					.addContainerGap(27, Short.MAX_VALUE))
 		);
@@ -133,7 +229,10 @@ public class BlueCryptPC {
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(btnStart)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnStart)
+						.addComponent(btnEncrypt)
+						.addComponent(btnDecrypt))
 					.addGap(74)
 					.addComponent(lblLog)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
