@@ -10,6 +10,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -21,13 +23,14 @@ import java.util.List;
  */
 public class CredentialStore
 {
-    private List<Serializable> credentials;
+    private List<Serializable> credentials, Keys;
     private MessageDigest md;
     private Context parent;
 
     public CredentialStore(boolean load, Context parent)
     {
         credentials = new ArrayList<>();
+        Keys = new ArrayList<>();
         this.parent = parent;
 
         try
@@ -44,10 +47,19 @@ public class CredentialStore
             try
             {
                 File file = new File(this.parent.getFilesDir() + "keystore");
+                File file2 = new File(this.parent.getFilesDir() + "RSA hashes");
+
                 FileInputStream f = new FileInputStream(file);
+                FileInputStream f2 = new FileInputStream(file2);
+
                 ObjectInputStream s = new ObjectInputStream(f);
+                ObjectInputStream s2 = new ObjectInputStream(f2);
+
                 credentials = (List<Serializable>)s.readObject();
+                Keys = (List<Serializable>)s2.readObject();
+
                 s.close();
+                s2.close();
             } catch (IOException | ClassNotFoundException e)
             {
                 System.out.println("Failed to load keystore");
@@ -64,6 +76,23 @@ public class CredentialStore
     public byte[] AddCredential(int PIN)
     {
         int success;
+
+        if(!HasCredentials())
+        {
+            try
+            {
+                KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+                keyGen.initialize(2048);
+
+                KeyPair keys = keyGen.generateKeyPair();
+
+                Keys.add(keys.getPrivate());
+                Keys.add(keys.getPublic());
+            } catch (NoSuchAlgorithmException e)
+            {
+                System.out.println("Failed to generate RSA keys");
+            }
+        }
 
         if(CheckCredential(PIN))
         {
@@ -97,6 +126,11 @@ public class CredentialStore
         return passed;
     }
 
+    public byte[] getRSAKey()
+    {
+        return (byte[]) Keys.get(1);
+    }
+
     //remove a credential from the store
     public int RemoveCredential (int PIN)
     {
@@ -116,14 +150,24 @@ public class CredentialStore
         int success = 0;
 
         File file = new File(parent.getFilesDir() + "keystore");
-        FileOutputStream f;
+        File file2 = new File(parent.getFilesDir() + "RSA hashes");
+        FileOutputStream f, f2;
 
         try {
             f = new FileOutputStream(file);
+            f2 = new FileOutputStream(file2);
+
             ObjectOutputStream s = new ObjectOutputStream(f);
+            ObjectOutputStream s2 = new ObjectOutputStream(f2);
+
             s.writeObject(credentials);
+            s2.writeObject(Keys);
+
             s.flush();
+            s2.flush();
+
             s.close();
+            s2.close();
         } catch (IOException e) {
             success = 1;
         }

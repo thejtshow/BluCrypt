@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (credentials.HasCredentials()) {
                         if (credentials.CheckCredential(PIN)) {
                             //log in
-                            Login(credentials.getHash(PIN));
+                            Login(credentials.getHash(PIN), credentials.getRSAKey());
 
                             infoText2.setText("");
                         } else {
@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                                             infoText2.setText("Added PIN to credential store");
 
                                             //now log the user in
-                                            Login(credentials.getHash(PIN));
+                                            Login(credentials.getHash(PIN), credentials.getRSAKey());
                                         }
                                         else
                                         {
@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void Login(byte[] hash)
+    private void Login(byte[] hash, byte[] RSAKey)
     {
         infoText.setText("Success!");
 
