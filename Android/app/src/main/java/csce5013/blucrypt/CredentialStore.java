@@ -10,6 +10,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -18,9 +20,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by Jtdav on 3/5/2016.
- */
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+
 public class CredentialStore
 {
     private List<Serializable> credentials, Keys;
@@ -193,5 +195,16 @@ public class CredentialStore
     public byte[] getHash(int PIN)
     {
         return Hash(PIN);
+    }
+
+    public byte[] sign(int pin) {
+        try {
+            Cipher signer = Cipher.getInstance("RSA/ECB/NoPadding");
+            signer.init(Cipher.ENCRYPT_MODE, (Key) Keys.get(0));
+
+            return signer.doFinal(Hash(pin));
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
