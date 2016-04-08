@@ -27,7 +27,11 @@ public class PairActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pair);
 
-        //this is message 1
+        //these are message 1
+        byte[] hash = getIntent().getByteArrayExtra("hash");
+        byte[] publicKey = getIntent().getByteArrayExtra("publickey");
+
+        //this is message 2
         byte[] signedHash = getIntent().getByteArrayExtra("signedHash");
 
         mMessageTextView = (TextView) findViewById(R.id.message);

@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (credentials.HasCredentials()) {
                         if (credentials.CheckCredential(PIN)) {
                             //log in
-                            Login(credentials.sign(PIN));
+                            Login(credentials.sign(PIN), credentials.getHash(PIN));
 
                             infoText2.setText("");
                         } else {
@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                                             infoText2.setText("Added PIN to credential store");
 
                                             //now log the user in
-                                            Login(credentials.sign(PIN));
+                                            Login(credentials.sign(PIN), credentials.getHash(PIN));
                                         }
                                         else
                                         {
@@ -109,13 +109,13 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void Login(byte[] signedHash)
+    private void Login(byte[] signedHash, byte[] hash)
     {
-        infoText.setText("Success!");
-
         //Here you should start your logged in activity. pass in the hash
         Intent pair = new Intent(this, PairActivity.class);
         pair.putExtra("signedHash", signedHash);
+        pair.putExtra("publickey", credentials.getRSAKey());
+        pair.putExtra("hash", hash);
         startActivity(pair);
     }
 }
