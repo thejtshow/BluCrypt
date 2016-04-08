@@ -2,6 +2,7 @@ package csce5013.blucrypt;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -108,10 +109,14 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void Login(byte[] hash, byte[] RSAKey)
+    private void Login(byte[] hash, byte[] RSAPublicKey)
     {
         infoText.setText("Success!");
 
         //Here you should start your logged in activity. pass in the hash
+        Intent pair = new Intent(this, PairActivity.class);
+        pair.putExtra("hash", hash);
+        pair.putExtra("key", RSAPublicKey);
+        startActivity(pair);
     }
 }
