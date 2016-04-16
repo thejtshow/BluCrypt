@@ -20,9 +20,9 @@ import android.widget.TextView;
 
 import java.util.Set;
 
-public class StartupActivity extends AppCompatActivity {
+public class BluetoothActivity extends AppCompatActivity {
 
-    public static final String TAG = "StartupActivity";
+    public static final String TAG = "BluetoothActivity";
     public static final int REQUEST_ENABLE_BT = 1;
 
     private BluetoothDevice mConnectedDevice = null;
