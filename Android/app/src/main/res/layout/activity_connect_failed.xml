@@ -1,13 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:gravity="center_horizontal"
     tools:context="csce5013.blucrypt.ConnectFailedActivity">
 
+    <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
 
+    <!--tools:showIn="@layout/activity_connect_failed"-->
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Connected to server"
+        android:id="@+id/textView"
+        android:textStyle="bold|italic"
+        android:textSize="36dp" />
 
-</LinearLayout>
+    <Space
+        android:id="@+id/space1"
+        android:layout_width="1dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/textView"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Error: Invalid Credentials. Check your credential and reconnect."
+        android:id="@+id/textViewError"
+        android:layout_below="@+id/space1"
+        android:textStyle="bold|italic"
+        android:textSize="24dp"
+        android:textColor="#169c11" />
+
+    <Button
+        android:id="@+id/resendBtn"
+        android:text="Reconnect"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:background="@drawable/resend_buttonshape"
+        android:shadowColor="#393E40"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/space2"
+        android:onClick="onResend" />
+
+    <Space
+        android:id="@+id/space2"
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:layout_above="@+id/disconnectBtn"/>
+
+    <Button
+        android:id="@+id/disconnectBtn"
+        android:text="Disconnect"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:background="@drawable/disconnect_buttonshape"
+        android:shadowColor="#393E40"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/space3"
+        android:onClick="onDisconnect"/>
+
+    <Space
+        android:id="@+id/space3"
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:layout_above="@+id/logoutBtn"/>
+
+    <Button
+        android:id="@+id/logoutBtn"
+        android:text="Logout"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:background="@drawable/logout_buttonshape"
+        android:shadowColor="#393E40"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/space4"
+        android:onClick="onFailedLogout"/>
+
+    <Space
+        android:id="@+id/space4"
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

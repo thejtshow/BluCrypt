@@ -3,6 +3,8 @@ package csce5013.blucrypt;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -25,6 +27,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +54,7 @@ public class UserLoginActivity extends AppCompatActivity implements LoaderCallba
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private String mCredential;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,10 +140,11 @@ public class UserLoginActivity extends AppCompatActivity implements LoaderCallba
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(this, email, password);
             mAuthTask.execute((Void) null);
         }
     }
+
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
@@ -147,7 +152,7 @@ public class UserLoginActivity extends AppCompatActivity implements LoaderCallba
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() >= 6;
     }
 
     /**
@@ -196,7 +201,7 @@ public class UserLoginActivity extends AppCompatActivity implements LoaderCallba
                 // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE +
                         " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                                                                     .CONTENT_ITEM_TYPE},
+                .CONTENT_ITEM_TYPE},
 
                 // Show primary email addresses first. Note that there won't be
                 // a primary email address if the user hasn't specified one.
@@ -220,6 +225,16 @@ public class UserLoginActivity extends AppCompatActivity implements LoaderCallba
 
     }
 
+    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
+        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(UserLoginActivity.this,
+                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
+
+        mEmailView.setAdapter(adapter);
+    }
+
+
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -230,16 +245,6 @@ public class UserLoginActivity extends AppCompatActivity implements LoaderCallba
         int IS_PRIMARY = 1;
     }
 
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(UserLoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
-    }
-
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -248,8 +253,10 @@ public class UserLoginActivity extends AppCompatActivity implements LoaderCallba
 
         private final String mEmail;
         private final String mPassword;
+        private Context mContext;
 
-        UserLoginTask(String email, String password) {
+        private UserLoginTask(Context context, String email, String password) {
+            mContext = context.getApplicationContext();
             mEmail = email;
             mPassword = password;
         }
@@ -260,7 +267,7 @@ public class UserLoginActivity extends AppCompatActivity implements LoaderCallba
 
             try {
                 // Simulate network access.
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 return false;
             }
@@ -283,7 +290,9 @@ public class UserLoginActivity extends AppCompatActivity implements LoaderCallba
             showProgress(false);
 
             if (success) {
-                finish();
+                Intent intent = new Intent(mContext, PairActivity.class);
+                intent.putExtra("hard coded key", "hard coded credential");
+                startActivity(intent);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

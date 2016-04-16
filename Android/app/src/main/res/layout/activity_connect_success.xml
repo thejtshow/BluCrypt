@@ -1,35 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="csce5013.blucrypt.ConnectSuccessActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_height="wrap_content"
+    <TextView
         android:layout_width="match_parent"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Connected to server"
+        android:id="@+id/textView"
+        android:textStyle="bold|italic"
+        android:textSize="36sp" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    <Space
+        android:id="@+id/space1"
+        android:layout_width="1dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/textView"/>
 
-    </android.support.design.widget.AppBarLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/connect_session_title"
+        android:id="@+id/textViewSuccess"
+        android:layout_below="@+id/space1"
+        android:textStyle="bold|italic"
+        android:textSize="24sp"
+        android:textColor="#169c11" />
 
-    <include layout="@layout/content_connect_success"/>
+    <Space
+        android:id="@+id/space2"
+        android:layout_width="1dp"
+        android:layout_height="10dp"
+        android:layout_below="@+id/textViewSuccess"/>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+    <TextView
+        android:id="@+id/timer"
+        android:text="Time Left"
+        android:paddingRight="10dip"
+        android:textSize="50sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/space2"
+        android:textStyle="bold"
+        android:textIsSelectable="false"
+        android:textColor="@color/abc_primary_text_material_light" />
 
-</android.support.design.widget.CoordinatorLayout>
+    <Button
+        android:id="@+id/renewBtn"
+        android:text="Renew Session"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:background="@drawable/resend_buttonshape"
+        android:shadowColor="#393E40"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/space3"
+        android:onClick="onRenew"/>
+
+    <Space
+        android:id="@+id/space3"
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:layout_above="@+id/disconnectBtn"/>
+
+    <Button
+        android:id="@+id/disconnectBtn"
+        android:text="Disconnect"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:background="@drawable/disconnect_buttonshape"
+        android:shadowColor="#393E40"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/space4"
+        android:onClick="onDisconnect"/>
+
+    <Space
+        android:id="@+id/space4"
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:layout_above="@+id/logoutBtn"/>
+
+    <Button
+        android:id="@+id/logoutBtn"
+        android:text="Logout"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:background="@drawable/logout_buttonshape"
+        android:shadowColor="#393E40"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/space5"
+        android:onClick="onSuccessLogout"/>
+
+    <Space
+        android:id="@+id/space5"
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
+

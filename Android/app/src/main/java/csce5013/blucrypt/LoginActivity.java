@@ -2,6 +2,7 @@ package csce5013.blucrypt;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,6 +18,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private CredentialStore credentials;
     private TextView infoText, infoText2;
+
+    private static final String HASH_KEY = "hash_key";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -108,10 +111,16 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Send credentials to the server via BT.
+     *
+     * @param hash the hash code of user credential.
+     */
     private void Login(byte[] hash)
     {
         infoText.setText("Success!");
-
-        //Here you should start your logged in activity. pass in the hash
+        Intent intent = new Intent(this, BluetoothActivity.class);
+        intent.putExtra(HASH_KEY, hash.toString());
+        startActivity(intent);
     }
 }

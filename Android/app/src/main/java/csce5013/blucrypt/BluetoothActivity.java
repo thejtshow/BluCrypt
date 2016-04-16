@@ -2,7 +2,6 @@ package csce5013.blucrypt;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -241,7 +240,7 @@ public class BluetoothActivity extends AppCompatActivity {
     }
 
     public void onClear(View view) {
-        mMessageTextView.setText(R.string.messagee_hint);
+        mMessageTextView.setText(R.string.message_hint);
     }
 
     /**
