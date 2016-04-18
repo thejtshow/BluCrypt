@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
         //Here you should start your logged in activity. pass in the hash
         Intent pair = new Intent(this, PairActivity.class);
         pair.putExtra("signedHash", signedHash);
-        pair.putExtra("publickey", credentials.getRSAKey());
+        pair.putExtra("publickey", credentials.getPublicRSAKey());
         pair.putExtra("hash", hash);
         startActivity(pair);
     }

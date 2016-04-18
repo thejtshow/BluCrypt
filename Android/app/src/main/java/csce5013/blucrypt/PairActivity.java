@@ -2,7 +2,6 @@ package csce5013.blucrypt;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,9 +17,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.nio.ByteBuffer;
 import java.util.Set;
 
 public class PairActivity extends AppCompatActivity {
+
+    private boolean connected, exclusive;
+    private byte[] hash, publicKey, signedHash;
+    private final long Threshold1 = 300000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,17 +32,20 @@ public class PairActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pair);
 
         //these are message 1
-        byte[] hash = getIntent().getByteArrayExtra("hash");
-        byte[] publicKey = getIntent().getByteArrayExtra("publickey");
+        hash = getIntent().getByteArrayExtra("hash");
+        publicKey = getIntent().getByteArrayExtra("publickey");
 
         //this is message 2
-        byte[] signedHash = getIntent().getByteArrayExtra("signedHash");
+        signedHash = getIntent().getByteArrayExtra("signedHash");
 
         mMessageTextView = (TextView) findViewById(R.id.message);
         ListView deviceListView = (ListView) findViewById(R.id.deviceList);
         mBTArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         deviceListView.setAdapter(mBTArrayAdapter);
         deviceListView.setOnItemClickListener(mBTonClickListener);
+
+        connected = false;
+        exclusive = true;
 
         initBluetooth();
     }
@@ -124,6 +131,11 @@ public class PairActivity extends AppCompatActivity {
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
                             Log.i(TAG, "BluetoothService: STATE_CONNECTED.");
+                            //set connected to true
+                            connected = true;
+                            //start message sending loop
+                            SendMessageLoop();
+
                             break;
                         case BluetoothService.STATE_CONNECTING:
                             Log.i(TAG, "BluetoothService: STATE_CONNECTING.");
@@ -131,6 +143,7 @@ public class PairActivity extends AppCompatActivity {
                         case BluetoothService.STATE_LISTEN:
                         case BluetoothService.STATE_NONE:
                             Log.i(TAG, "BluetoothService: STATE_NOT_CONNECTED");
+                            connected = false;
                             break;
                     }
                     break;
@@ -157,6 +170,40 @@ public class PairActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void SendMessageLoop()
+    {
+        if (exclusive)
+        {
+            exclusive = !exclusive;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        //send message 1
+                        Log.i(TAG, "Sending Message 1: hash");
+                        sendMessage(ByteBuffer.allocate(4).putInt(hash.length).array());
+                        sendMessage(hash);
+                        Log.i(TAG, "Sending Message 1: Key");
+                        sendMessage(ByteBuffer.allocate(4).putInt(publicKey.length).array());
+                        sendMessage(publicKey);
+
+                        //send message 2, then wait
+                        while (connected) {
+                            Log.i(TAG, "Sending Message 2: Signed Hash");
+                            sendMessage(ByteBuffer.allocate(4).putInt(signedHash.length).array());
+                            sendMessage(signedHash);
+                            Thread.sleep(Threshold1);
+                        }
+
+                        exclusive = !exclusive;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
+    }
 
     private void showMessage(String readMessage) {
         mMessageTextView.setText(readMessage);
@@ -199,7 +246,7 @@ public class PairActivity extends AppCompatActivity {
     }
 
     public void onClear(View view) {
-        mMessageTextView.setText(R.string.messagee_hint);
+        mMessageTextView.setText(R.string.message_hint);
     }
 
     /**

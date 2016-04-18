@@ -1,0 +1,14 @@
+How to check hash:
+
+Cipher cipher = null;
+byte[] check = null;
+try {
+	cipher = Cipher.getInstance("RSA");
+	cipher.init(Cipher.DECRYPT_MODE, KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(publicKey)));
+	check = cipher.doFinal(signedHash);
+	
+	//Compare hash with check. if they match, success. If not, bad PIN or RSA key. 
+	
+} catch (NoSuchPaddingException | InvalidKeyException | InvalidKeySpecException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException e) {
+	e.printStackTrace();
+}
