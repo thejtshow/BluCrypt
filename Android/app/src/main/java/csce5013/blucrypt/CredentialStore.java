@@ -16,6 +16,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -130,7 +131,7 @@ public class CredentialStore
 
     public byte[] getRSAKey()
     {
-        return (byte[]) Keys.get(1);
+        return ((PublicKey) Keys.get(1)).getEncoded();
     }
 
     //remove a credential from the store
