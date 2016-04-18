@@ -129,7 +129,7 @@ public class CredentialStore
         return passed;
     }
 
-    public byte[] getRSAKey()
+    public byte[] getPublicRSAKey()
     {
         return ((PublicKey) Keys.get(1)).getEncoded();
     }
