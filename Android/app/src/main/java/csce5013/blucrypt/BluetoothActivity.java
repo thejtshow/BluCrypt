@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Set;
 
@@ -33,6 +37,9 @@ public class BluetoothActivity extends AppCompatActivity {
     private ArrayAdapter<String> mBTArrayAdapter = null;
 
     TextView mMessageTextView;
+
+    JSONObject debugJson;
+    //JSONParser jParser = new JSONParser();
 
     /**
      * broadcast receiver for BT discovery.
@@ -77,7 +84,7 @@ public class BluetoothActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_startup);
+        setContentView(R.layout.activity_bluetooth);
 
         mMessageTextView = (TextView) findViewById(R.id.message);
         ListView deviceListView = (ListView) findViewById(R.id.deviceList);
@@ -236,7 +243,16 @@ public class BluetoothActivity extends AppCompatActivity {
 
     public void onSend(View view) {
         String msg = "hello from " + mDeviceName;
-        sendMessage(msg);
+
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put(Constants.DEVICE_KEY, "debug device key");
+            obj.put(Constants.USER_KEY, "debug user key");
+        } catch (JSONException e) {
+            Log.i(TAG, "Invalid Json object.");
+            e.printStackTrace();
+        }
+        sendMessage(obj.toString());
     }
 
     public void onClear(View view) {

@@ -1,6 +1,29 @@
 <resources>
     <string name="app_name">BluCrypt</string>
     <string name="description">Message from the server:</string>
-    <string name="message"></string>
-    <string name="messagee_hint">[display message from paird device...]</string>
+    <string name="message_hint">[display message from paired device…]</string>
+    <string name="title_activity_user_login">BlueCrypt User Sign-in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_register">Register</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_connect_failed">Connection Failed</string>
+    <string name="title_activity_connect_success">Connected</string>
+    <string name="device_list_title">Pick a nearby BT device to connect</string>
+    <string name="sign_in_text">Sign in/Register</string>
+    <string name="register_text">Register</string>
+    <string name="loading_text">Loading nearby devices…</string>
+    <string name="connect_session_title">Remaining time of your session:</string>
+    <string name="title_activity_pair">Pair to BT server</string>
+    <string name="message" />
+    <string name="bluetooth_activity_title">BT test</string>
 </resources>
