@@ -25,5 +25,7 @@ public interface Constants {
     // JSON KEYS
     String DEVICE_KEY = "DEVICE_KEY";
     String USER_KEY = "USER_KEY";
+    String RESP_KEY = "RESP";
+    String HEART_BEAT_KEY = "HEARTBEAT";
 }
 

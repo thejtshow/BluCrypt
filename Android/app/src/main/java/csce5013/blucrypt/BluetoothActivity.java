@@ -21,25 +21,31 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.Set;
 
 public class BluetoothActivity extends AppCompatActivity {
 
     public static final String TAG = "BluetoothActivity";
+
+    // for debugging
+    public static final boolean isServer = false;
+
     public static final int REQUEST_ENABLE_BT = 1;
 
     private BluetoothDevice mConnectedDevice = null;
     private String mDeviceName = null;
     private boolean mSecurity = true;
 
+    private CredentialStore credentials;
+//    private final String deviceKeyString = null;
+//    private final String userKeyString = null;
+
     private BluetoothService mBluetoothService = null;
     private BluetoothAdapter mBluetoothAdapter = null;
     private ArrayAdapter<String> mBTArrayAdapter = null;
 
     TextView mMessageTextView;
-
-    JSONObject debugJson;
-    //JSONParser jParser = new JSONParser();
 
     /**
      * broadcast receiver for BT discovery.
@@ -92,6 +98,11 @@ public class BluetoothActivity extends AppCompatActivity {
         deviceListView.setAdapter(mBTArrayAdapter);
         deviceListView.setOnItemClickListener(mBTonClickListener);
 
+        // credentials:
+        credentials = new CredentialStore((new File(this.getFilesDir() + "keystore").exists()
+                && !(new File(this.getFilesDir() + "keystore").isDirectory())), this);
+
+        // bluetooth:
         initBluetooth();
     }
 
@@ -241,9 +252,48 @@ public class BluetoothActivity extends AppCompatActivity {
         registerReceiver(btReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
     }
 
-    public void onSend(View view) {
-        String msg = "hello from " + mDeviceName;
+    public void onHeartBeat(View view) {
+        JSONObject obj = new JSONObject();
 
+        if(!isServer) {
+            obj = sendMessageHeartBeat();
+        }
+        if(obj == null) {
+            Log.i(TAG, "Invalid json object to send.");
+        } else {
+            sendMessage(obj.toString());
+        }
+    }
+
+    public void onSend(View view) {
+        JSONObject obj = new JSONObject();
+
+        if(isServer) {
+            obj = sendMessageServer();
+        } else
+        {
+            obj = sendMessageClient();
+        }
+        if(obj == null) {
+            Log.i(TAG, "Invalid json object to send.");
+        } else {
+            sendMessage(obj.toString());
+        }
+
+    }
+
+    private JSONObject sendMessageServer() {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put(Constants.RESP_KEY, "success");
+        } catch (JSONException e) {
+            Log.i(TAG, "Invalid Json object.");
+            e.printStackTrace();
+        }
+        return obj;
+    }
+
+    private JSONObject sendMessageClient() {
         JSONObject obj = new JSONObject();
         try {
             obj.put(Constants.DEVICE_KEY, "debug device key");
@@ -252,7 +302,22 @@ public class BluetoothActivity extends AppCompatActivity {
             Log.i(TAG, "Invalid Json object.");
             e.printStackTrace();
         }
-        sendMessage(obj.toString());
+        return obj;
+    }
+
+    private JSONObject sendMessageHeartBeat() {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put(Constants.HEART_BEAT_KEY, Constants.HEART_BEAT_LENGTH);
+        } catch (JSONException e) {
+            Log.i(TAG, "Invalid Json object.");
+            e.printStackTrace();
+        }
+        return obj;
+    }
+
+    private void generateUserCredentials() {
+
     }
 
     public void onClear(View view) {

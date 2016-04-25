@@ -62,11 +62,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Clear Message"
-        android:id="@+id/ClearButton"
+        android:text="HeartBeat"
+        android:id="@+id/HeartBeatButton"
         android:layout_alignParentBottom="true"
         android:layout_toStartOf="@+id/sendBtn"
-        android:onClick="onClear"/>
+        android:onClick="onHeartBeat"/>
 
 
 </RelativeLayout>

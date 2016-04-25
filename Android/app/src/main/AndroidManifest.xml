@@ -18,7 +18,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".BluetoothActivity"
-            android:label="@string/bluetooth_activity_title">
+            android:label="@string/bluetooth_activity_title"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
