@@ -1,3 +1,4 @@
 /.metadata/
-Android/.idea/
+Android/.idea/*
 /.recommenders/
+Android/app/app.iml
