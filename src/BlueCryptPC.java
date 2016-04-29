@@ -25,6 +25,8 @@ import javax.swing.JLabel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +50,13 @@ public class BlueCryptPC {
 
 	private JFrame frmBlurcrypt;
 	private JButton btnEncrypt;
+	
+	private static final int STATE_WAIT_FOR_PAIR=0;
+	private static final int STATE_PAIRED=1;
+	private static final int STATE_DISCONNECTED=2;
+	private static final int STATE_CONFIG=3;
+	
+	private static Credential credential = new Credential();
 
 	/**
 	 * Launch the application.
@@ -71,7 +80,7 @@ public class BlueCryptPC {
 	public BlueCryptPC() {
 		initialize();
 	}
-	private void startServer() throws IOException{
+	private void startServer() throws Exception{
 		
 		uuid = new UUID("1101",true);
 		connectionString="btspp://localhost:"+uuid+";name=BlueCryptPC";
@@ -84,20 +93,48 @@ public class BlueCryptPC {
 		System.out.println("Remote device address: "+remoteDevice.getBluetoothAddress());
 	    System.out.println("Remote device name: "+remoteDevice.getFriendlyName(true));
 
-	    InputStream inputStream=streamConnection.openInputStream();
-		BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
-		readMessage=bufferedReader.readLine();
-		System.out.println(readMessage);
+	    
+	    ReadThread readThread=new ReadThread(streamConnection, readMessage);
+	    readThread.start();
+
+	  
+	    
+		//receive message 1 from client, initial a credential for the client
 		
-		sendMessage="I got it!";
-		OutputStream outputStream=streamConnection.openOutputStream();
+		/*JSONUtil.parseJSON(readMessage, credential);
+		String response_success = JSONUtil.generateJSON("Success");
+		String response_fail = JSONUtil.generateJSON("Fail, you are a new user!");*/
+		
+		
+		//send feedback to client;
+		/*WriteThread writeThread=new WriteThread("Success!", streamConnection);
+		writeThread.start();*/
+		/*OutputStream outputStream=streamConnection.openOutputStream();
 		PrintWriter printWriter=new PrintWriter(new OutputStreamWriter(outputStream));
-		printWriter.write(sendMessage);
+		printWriter.write(response_success);*/
+		/*if (DataUtil.checkCredential(credential)) {
+			printWriter.write(response_success);
+		}else {
+			printWriter.write(response_fail);
+			DataUtil.inserCredential(credential);
+		}
 		printWriter.flush();
 		printWriter.close();
-	    
+	    */
 	}
 
+	public static byte[] readStream(InputStream inStream) throws Exception {  
+	    ByteArrayOutputStream outSteam = new ByteArrayOutputStream();  
+	    byte[] buffer = new byte[1024];  
+	    int len = -1;  
+	    while ((len = inStream.read(buffer)) != -1) {  
+	        outSteam.write(buffer, 0, len);  
+	    }  
+	    outSteam.close();  
+	    inStream.close();  
+	    return outSteam.toByteArray();  
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -116,7 +153,7 @@ public class BlueCryptPC {
 				textArea.append("Start listening..."+"\n");
 				 try {
 					 startServer();
-				} catch (IOException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -141,15 +178,16 @@ public class BlueCryptPC {
 		            System.out.println("File:"+file.getAbsolutePath());  
 		        }  
 		        System.out.println(jfc.getSelectedFile().getName());
-		        CryptUtil cryptUtil=new CryptUtil(file.getAbsolutePath().replaceAll("\\\\", "/"), "C:\\Users\\Owner\\Desktop\\keyfolder\\", "zx9956123");
-		        try {
+		        
+		       /* try {
+		        	CryptUtil cryptUtil=new CryptUtil(file.getAbsolutePath().replaceAll("\\\\", "/"), "C:\\Users\\Owner\\Desktop\\keyfolder\\", "zx9956123",credential);
 		        	cryptUtil.generateKey();
 					//cryptUtil.loadKey();
 					cryptUtil.encryptFile();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} 
+				} */
 		        
 			}
 		});
@@ -169,15 +207,15 @@ public class BlueCryptPC {
 		            System.out.println("File:"+file.getAbsolutePath());  
 		        }  
 		        System.out.println(jfc.getSelectedFile().getName());
-		        CryptUtil cryptUtil=new CryptUtil(file.getAbsolutePath().replaceAll("\\\\", "/"), "C:\\Users\\Owner\\Desktop\\keyfolder\\", "zx9956123");
-		        try {
+		        
+		        /*try {
+		        	CryptUtil cryptUtil=new CryptUtil(file.getAbsolutePath().replaceAll("\\\\", "/"), "C:\\Users\\charles\\Desktop\\keyfolder\\", "zx9956123",credential);
 		        	cryptUtil.generateKey();
-					//cryptUtil.loadKey();
 					cryptUtil.encryptFile();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} 
+				} */
 		        
 			}
 		});
@@ -196,17 +234,20 @@ public class BlueCryptPC {
 		            System.out.println("File:"+file.getAbsolutePath());  
 		        }  
 		        System.out.println(jfc.getSelectedFile().getName());
-		        CryptUtil cryptUtil=new CryptUtil(file.getAbsolutePath().replaceAll("\\\\", "/"), "C:\\Users\\Owner\\Desktop\\keyfolder\\", "zx9956123");
-		        try {       	
+		        
+		        /*try { 
+		        	CryptUtil cryptUtil=new CryptUtil(file.getAbsolutePath().replaceAll("\\\\", "/"), "C:\\Users\\charles\\Desktop\\keyfolder\\", "zx9956123",credential);
 					cryptUtil.loadKey();
 					cryptUtil.decryptionFile();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} 
+				} */
 		        
 			}
 		});
+		
+		
 		
 
 		GroupLayout groupLayout = new GroupLayout(frmBlurcrypt.getContentPane());
@@ -241,4 +282,5 @@ public class BlueCryptPC {
 		);
 		frmBlurcrypt.getContentPane().setLayout(groupLayout);
 	}
+	
 }
